@@ -10,10 +10,12 @@ public class Enemy : Entity
     public GameObject poison;
     public GameObject Eyebeam;
     public GameObject player;
+    public int spin;
     // Start is called before the first frame update
     new void Start()
     {
-        base.Start(); 
+        base.Start();
+        spin = 0;
     }
 
     // Update is called once per frame
@@ -32,5 +34,18 @@ public class Enemy : Entity
     public void GetEntangled()
     {
         this.isEntangled = true;
+    }
+    public void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "electron")
+        {
+            spin += other.GetComponent<Electron>().spin;
+            hp -= 1;
+        }
+        if (other.gameObject.tag == "Wave" || other.gameObject.tag == "Sword")
+        {
+            hp -= 1 + spin;
+        }
+        
     }
 }

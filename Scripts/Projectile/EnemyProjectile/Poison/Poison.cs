@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Poison : MonoBehaviour
+public class Poison : EnemyProjectile
 {
     public GameObject poison;
     // Start is called before the first frame update
@@ -16,4 +16,5 @@ public class Poison : MonoBehaviour
     {
         
     }
+    
 }

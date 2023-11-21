@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuantumHands : MonoBehaviour
+public class QuantumHands : Item
 {
-    // Start is called before the first frame update
-    void Start()
+    public new void pickup()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        player.dcd = 0;
     }
 }

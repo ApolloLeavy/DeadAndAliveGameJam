@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Electron : MonoBehaviour
+public class Electron : PlayerProjectile
 {
+    public int spin = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,4 +16,5 @@ public class Electron : MonoBehaviour
     {
         
     }
+    
 }

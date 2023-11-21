@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pool : MonoBehaviour
+public class Pool : EnemyProjectile
 {
     // Start is called before the first frame update
     void Start()
@@ -12,6 +12,10 @@ public class Pool : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        
+    }
+    protected new void OnTriggerEnter(Collider other)
     {
         
     }

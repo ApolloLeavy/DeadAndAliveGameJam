@@ -2,17 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RingOfJumposition : MonoBehaviour
+public class RingOfJumposition : Item
 {
-    // Start is called before the first frame update
-    void Start()
+    public new void pickup()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        player.doubleJump = true;
+        player.doubleJumps++;
     }
 }

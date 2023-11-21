@@ -17,8 +17,8 @@ public class Projectile : MonoBehaviour
     {
         
     }
-    protected void OnCollisionEnter(Collision collision)
+    protected void OnTriggerEnter(Collider other)
     {   
-        
+        Destroy(this.gameObject);
     }
 }

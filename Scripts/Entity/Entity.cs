@@ -7,6 +7,7 @@ public class Entity : MonoBehaviour
 {
     public float speed;
     public float hp;
+    public float maxHp;
     public bool canJump;
     public bool lastJump;
     public Vector2 jumpSpeed;
@@ -70,6 +71,7 @@ public class Entity : MonoBehaviour
     public void Jump(InputAction.CallbackContext ev)
     {
         if(ev.started && canJump == true)
-        lastJump = true;
+            lastJump = true;
+        
     }
 }

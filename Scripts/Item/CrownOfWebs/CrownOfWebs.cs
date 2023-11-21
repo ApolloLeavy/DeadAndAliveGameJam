@@ -2,17 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrownOfWebs : MonoBehaviour
+public class CrownOfWebs : Item
 {
-    // Start is called before the first frame update
-    void Start()
+    public new void pickup()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        if(player.qecd >= 3)
+        player.qecd *= .666f;
+        if (player.qeCost > 0)
+            player.qeCost--;
         
     }
 }
