@@ -13,7 +13,7 @@ public class Entity : MonoBehaviour
     public Vector2 jumpSpeed;
     public bool canFire;
     public bool lastFire;
-    public bool isEntangled;
+    
     public Vector2 lastDirection;
     public Rigidbody myRig;
     public Animator myAnim;
@@ -28,7 +28,6 @@ public class Entity : MonoBehaviour
         //jumpSpeed
         canFire = true;
         lastFire = false;
-        isEntangled = false;
         myRig = this.GetComponent<Rigidbody>();
         myAnim = this.GetComponent<Animator>();
     }

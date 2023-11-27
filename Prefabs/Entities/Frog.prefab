@@ -206,6 +206,7 @@ GameObject:
   - component: {fileID: 815970824460632552}
   - component: {fileID: 4209322990541243439}
   - component: {fileID: 2350686872736630011}
+  - component: {fileID: -1017760635576789473}
   m_Layer: 0
   m_Name: Frog
   m_TagString: Untagged
@@ -242,6 +243,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e57ac456475ce5478eef3697f90ec1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
+  hp: 0
+  maxHp: 0
+  canJump: 0
+  lastJump: 0
+  jumpSpeed: {x: 0, y: 0}
+  canFire: 0
+  lastFire: 0
+  lastDirection: {x: 0, y: 0}
+  myRig: {fileID: 0}
+  myAnim: {fileID: 0}
+  isWander: 0
+  sightRange: 0
+  closeRange: 0
+  poison: {fileID: 0}
+  Eyebeam: {fileID: 0}
+  player: {fileID: 0}
+  tangled: {fileID: 0}
+  spin: 0
+  isEntangled: 0
+  entangleBounce: 0
+  entangleDuration: 0
+  Goal1: {fileID: 0}
+  Goal2: {fileID: 0}
+  goal1: {x: 0, y: 0, z: 0}
+  goal2: {x: 0, y: 0, z: 0}
+  canJumpDelay: 0
+  jumpTimer: 0
+  goal: 1
+  myNav: {fileID: 0}
 --- !u!54 &815970824460632552
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -312,6 +343,28 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -713352464119345541, guid: e8fe5162d0abfcf498a014ae7b8dac99, type: 3}
+--- !u!195 &-1017760635576789473
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3761755702895643879}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 2.54
+  m_Speed: 4
+  m_Acceleration: 2
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &4215261421934372055
 GameObject:
   m_ObjectHideFlags: 0

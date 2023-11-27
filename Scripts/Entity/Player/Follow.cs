@@ -14,20 +14,20 @@ public class Follow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        sensitivity = 0.1f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        camRot.y += camDelta.y;
-        camRot.x += camDelta.x;
+        camRot.y -= camDelta.y * sensitivity;
+        camRot.x += camDelta.x * sensitivity;
         if (camRot.y > 100)
             camRot.y = 100;
         if (camRot.y < -60)
             camRot.y = -60;
-        this.transform.position = player.position + offset;
-        this.transform.rotation = Quaternion.Euler(camRot.y,camRot.x,0);
+        transform.position = player.position + offset;
+        transform.rotation = Quaternion.Euler(camRot.y,camRot.x,0);
          
     }
     

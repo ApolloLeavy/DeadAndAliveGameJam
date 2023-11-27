@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7637973875109801120}
   - component: {fileID: 2462237326973062993}
   - component: {fileID: 4594730903331680029}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: spit
   m_TagString: Poison
   m_Icon: {fileID: 0}
@@ -96,4 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e98e9014ae919fe40aa3e80ac0c48e24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
+  myRig: {fileID: 0}
   poison: {fileID: 0}

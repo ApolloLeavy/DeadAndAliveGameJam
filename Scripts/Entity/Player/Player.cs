@@ -5,47 +5,78 @@ using UnityEngine.InputSystem;
 
 public class Player : Entity 
 {
+    public float playerHeight;
     public float decoherence;
     public float maxDecoherence;
     public float decoherenceGain;
-    public Item[] items;
+
     public bool canTunnel;
+
     public float qtRange;
+    public float spRange;
+    public float qeRange;
+
     public bool canSuper;
+
     public bool canAlignment;
     public bool isAlignment;
+
     public bool canEntangle;
+
     public bool canDuality;
     public bool isDuality; //false is particle, true is wave
-    public GameObject electron;
-    public GameObject wave;
-    public GameObject cam;
-    public GameObject staff;
+
     public float qtcd;
     public float spcd;
     public float aacd;
     public float qecd;
-    public float qeCost;
     public float dcd;
+
+    public float qeCost;
+
     public float spinAmount;
+
     public bool doubleJump;
     public int doubleJumps;
     public int canDoubleJump;
+
     public float dodgeChance;
+
+    public float iframes;
+    public bool isInvincible;
+
+    public GameObject electron;
+    public GameObject wave;
+    public Transform look;
+    public Transform cam;
+    public GameObject staff;
+    public GameObject reticle;
+
+    AudioSource hitSound;
+    AudioSource particleSound;
+    AudioSource waveSound;
+    AudioSource tunnelSound;
+    AudioSource entangleSound;
+    AudioSource alignmentSound;
+    AudioSource positionSound;
     
     
     // Start is called before the first frame update
     new void Start()
     {
         base.Start();
+        playerHeight = 4.75f;
         speed = 10.0f;
         hp = 20.0f;
-        jumpSpeed = new Vector2(0, 10);
-        decoherence = 6;
+        maxHp = 20;
+        jumpSpeed = new Vector2(0, 20);
+        decoherence = 0;
         maxDecoherence = 6;
         decoherenceGain = 1;
         canTunnel = true;
         qtRange = 10;
+        spRange = 20;
+        qeRange = 20;
         canSuper = true;
         canAlignment = true;
         isAlignment = false;
@@ -63,15 +94,18 @@ public class Player : Entity
         canDoubleJump = 0;
         qeCost = 3;
         dodgeChance = 0;
-        Decoherence();
+        iframes = .67f;
+        isInvincible = false;
+        StartCoroutine(Decoherence());
+        
     }
 
     // Update is called once per frame
     new void Update()
     {
         
-        myRig.velocity =  cam.transform.up * -1 * speed * lastDirection.y + new Vector3(0, myRig.velocity.y, 0);
-        myRig.velocity += cam.transform.right * speed * lastDirection.x;
+        myRig.velocity =  new Vector3(look.forward.x,0, look.forward.z).normalized * speed * lastDirection.y + new Vector3(0, myRig.velocity.y, 0);
+        myRig.velocity += new Vector3(look.right.x, 0, look.right.z).normalized * speed * lastDirection.x;
 
             if (lastDirection != Vector2.zero)
             {
@@ -89,9 +123,9 @@ public class Player : Entity
                 RaycastHit[] checks = Physics.RaycastAll(this.myRig.position, this.transform.up * -1);
                 if (checks != null)
                 {
-                    foreach (RaycastHit check in checks)
+                    foreach (RaycastHit ready in checks)
                     {
-                        if (check.distance < .5f && (check.collider.gameObject.tag == "World"))
+                        if (ready.distance < .5f && (ready.collider.gameObject.CompareTag("World")))
                             canJump = true;
                     if (doubleJump == true)
                         canDoubleJump = doubleJumps;
@@ -100,8 +134,28 @@ public class Player : Entity
 
             }
         
+
+            Physics.Raycast(cam.transform.position + cam.transform.forward * .5f, cam.transform.forward, out RaycastHit check);
+
+            if (check.distance <= qeRange && check.collider)
+            {
+                if (check.collider.gameObject.CompareTag("Enemy"))
+                {
+                    reticle.transform.localScale = new Vector3(2,2,2);
+                }
+                else
+                    reticle.transform.localScale = new Vector3(1, 1, 1);
+
+            }
+            else
+                reticle.transform.localScale = new Vector3(1, 1, 1);
+
+
+
+
+
     }
-  
+
     public void onMove(InputAction.CallbackContext ev)
     {
         if (ev.started)
@@ -124,11 +178,11 @@ public class Player : Entity
     {
         if (ev.performed)
         {
-            cam.GetComponent<Follow>().camDelta = ev.ReadValue<Vector2>();
+            look.GetComponent<Follow>().camDelta = ev.ReadValue<Vector2>();
         }
         if(ev.canceled)
         {
-            cam.GetComponent<Follow>().camDelta = Vector2.zero;
+            look.GetComponent<Follow>().camDelta = Vector2.zero;
         }
     }
     public new void Fire(InputAction.CallbackContext ev)
@@ -140,12 +194,12 @@ public class Player : Entity
     }
     IEnumerator Decoherence()
     {
-
         yield return new WaitForSecondsRealtime(2);
-        
-        if (decoherence < maxDecoherence)
-            decoherence+=decoherenceGain;
-        Decoherence();
+        if (decoherence < maxDecoherence - decoherenceGain + 1)
+            decoherence += decoherenceGain;
+        else
+            decoherence = maxDecoherence;
+        StartCoroutine(Decoherence());
     }
     public void QuantumTunnel(InputAction.CallbackContext ev)
     {
@@ -154,11 +208,14 @@ public class Player : Entity
             decoherence -= 1;
             canTunnel = false;
             if (lastDirection != Vector2.zero)
-                myRig.position += new Vector3(lastDirection.x, 0, lastDirection.y) * qtRange;
+            {
+                this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * qtRange * lastDirection.y;
+                this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * qtRange * lastDirection.x;
+            }
+                
             else
-                myRig.position += new Vector3(lastDirection.x, 0, lastDirection.y) * qtRange;
             StartCoroutine(QTCD());
-            canTunnel = true;
+            
 
         }
        
@@ -167,7 +224,8 @@ public class Player : Entity
     {
 
         yield return new WaitForSecondsRealtime(qtcd);
-        
+        canTunnel = true;
+
     }
     public void SuperPosition(InputAction.CallbackContext ev)
     {
@@ -175,15 +233,48 @@ public class Player : Entity
         {
             decoherence -= 2;
             canSuper = false;
+            if (canJump)
+            {
+                Physics.Raycast(this.transform.position + new Vector3(0, playerHeight, 0), this.transform.up, out RaycastHit superCheck);
+
+                if (superCheck.distance <= spRange)
+                {
+                    if (superCheck.collider.gameObject.CompareTag("Enemy") || superCheck.collider.gameObject.CompareTag("World"))
+
+                    {
+                        this.transform.position += new Vector3(0, superCheck.distance - playerHeight, 0);
+                        
+                    }
+                }
+                else
+                    this.transform.position += new Vector3(0, spRange, 0);
+            }
+            else
+            {
+                Physics.Raycast(this.transform.position - new Vector3(0, -.25f, 0), this.transform.up * -1, out RaycastHit superCheck);
+
+                if (superCheck.distance <= spRange)
+                {
+                    if (superCheck.collider.gameObject.CompareTag("Enemy") || superCheck.collider.gameObject.CompareTag("World"))
+
+                    {
+                        this.transform.position -= new Vector3(0, superCheck.distance, 0);
+                        myRig.velocity = new Vector3(myRig.velocity.x, 0, myRig.velocity.z);
+                        canJump = true;
+                    }
+                }
+                else
+                    this.transform.position -= new Vector3(0, spRange, 0);
+            }
             StartCoroutine(SPCD());
-            canSuper = true;
         }
     }
     IEnumerator SPCD()
     {
 
         yield return new WaitForSecondsRealtime(spcd);
-        
+        canSuper = true;
+
     }
     public void AtomicAlignment(InputAction.CallbackContext ev)
     {
@@ -193,15 +284,15 @@ public class Player : Entity
             isAlignment = true;
             canAlignment = false;
             StartCoroutine(AACD());
-            isAlignment = false;
-            canAlignment = true;
+            
         }
     }
     IEnumerator AACD()
     {
 
         yield return new WaitForSecondsRealtime(aacd);
-        
+        isAlignment = false;
+        canAlignment = true;
     }
     public void QuantumEntangle(InputAction.CallbackContext ev)
     {
@@ -209,21 +300,26 @@ public class Player : Entity
         {
             decoherence -= 3;
             canEntangle = false;
-            RaycastHit check;
-            Physics.Raycast(staff.transform.position, cam.transform.forward, out check);
-            if (check.distance < 10f )
-            {
-                if (check.collider.gameObject.tag == "Enemy")
-                    check.collider.gameObject.GetComponentInParent<Enemy>().GetEntangled();
-            }
+            Physics.Raycast(cam.transform.position + cam.transform.forward, cam.transform.forward, out RaycastHit check);
+            
+                if (check.distance <= qeRange)
+                {
+                    if (check.collider.gameObject.CompareTag("Enemy"))
+
+                    {
+                        check.collider.gameObject.GetComponentInParent<Enemy>().getEntangled();
+
+
+                    }
+                }
             StartCoroutine(QECD());
-            canEntangle = true;
+            
         }
     }
     IEnumerator QECD()
     {
-        if(qecd > 0)
         yield return new WaitForSecondsRealtime(qecd);
+        canEntangle = true;
     }
     public void Duality(InputAction.CallbackContext ev)
     {
@@ -233,14 +329,15 @@ public class Player : Entity
                 isDuality = false;
             else
                 isDuality = true;
-            DCD();
-            canDuality = true;
+            StartCoroutine(DCD());
+            
         }
     }
     IEnumerator DCD()
     {
         if (dcd > 0)
-        yield return new WaitForSecondsRealtime(dcd);  
+        yield return new WaitForSecondsRealtime(dcd);
+        canDuality = true;
     }
     public new void Jump(InputAction.CallbackContext ev)
     {
@@ -251,25 +348,56 @@ public class Player : Entity
             canDoubleJump--;
         }
     }
+    IEnumerator Invincibility()
+    {
+        yield return new WaitForSecondsRealtime(iframes);
+        isInvincible = false;
+    }
     protected void OnTriggerEnter(Collider other)
     {
-        float rand = 100;
-        if (dodgeChance > 0)
-            rand = Time.realtimeSinceStartup % 100 + 1;
-        if (!isAlignment || rand < dodgeChance)
+        
+        if (!isAlignment && !isInvincible)
         {
-            if (other.gameObject.tag == "Eyebeam")
+            float rand = 100;
+            if (dodgeChance > 0)
+                rand = Time.realtimeSinceStartup % 100 + 1;
+            if (rand < dodgeChance)
             {
+                if (other.gameObject.CompareTag("Eyebeam"))
+                {
                     if (decoherence > 0)
                         decoherence--;
                     hp--;
+                    isInvincible = true;
+                }
+                else if (other.gameObject.CompareTag("Pool") || other.gameObject.CompareTag("Poison"))
+                {
+                    hp--;
+                    isInvincible = true;
+                    StartCoroutine(Invincibility());
+                }
+
             }
-            else if (other.gameObject.tag == "Pool" || other.gameObject.tag == "Poison")
-            {
-                hp--;
-            }
+           
         }
-            
-            
+    }
+    private void OnCollisionStay(Collision other)
+    {
+        if (!isAlignment && !isInvincible)
+        {
+            float rand = 100;
+            if (dodgeChance > 0)
+                rand = Time.realtimeSinceStartup % 100 + 1;
+            if (rand > dodgeChance)
+            {
+                if (other.gameObject.CompareTag("Enemy"))
+                {
+                    hp--;
+                    isInvincible = true;
+                    StartCoroutine(Invincibility());
+                }
+            }
+
+        }
     }
 }

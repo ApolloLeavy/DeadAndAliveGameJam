@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3059110133215423426}
   - component: {fileID: 6540449236631440792}
   - component: {fileID: 556344074802342067}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PoisionPool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,6 +96,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ece40c084f2bb4f8637e63f6e6de27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
+  myRig: {fileID: 0}
 --- !u!1 &5726107350272431634
 GameObject:
   m_ObjectHideFlags: 0
@@ -107,7 +109,7 @@ GameObject:
   - component: {fileID: 2059885275866686414}
   - component: {fileID: 6076660636518572921}
   - component: {fileID: 7568253616811135341}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bubble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +190,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4538368749697493395}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PoisonPool
   m_TagString: Poison
   m_Icon: {fileID: 0}

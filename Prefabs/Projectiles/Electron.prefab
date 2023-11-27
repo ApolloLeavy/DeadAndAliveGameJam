@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 47389581687961954}
   - component: {fileID: 6812910496856580813}
   - component: {fileID: 7035791287860385817}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Electron
   m_TagString: Electron
   m_Icon: {fileID: 0}
@@ -96,4 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8490561b70b0a174b853fccecff930f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
+  myRig: {fileID: 0}
   spin: 1

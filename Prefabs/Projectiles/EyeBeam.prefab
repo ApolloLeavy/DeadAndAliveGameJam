@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1506716080517031213}
   - component: {fileID: 5217257468166191584}
   - component: {fileID: 4072820239566337309}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EyeBeam
   m_TagString: Eyebeam
   m_Icon: {fileID: 0}
@@ -96,3 +96,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f27b5d90153f39949bec2b51db20c878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
+  myRig: {fileID: 0}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7285810380677933236}
   - component: {fileID: 3231710525468985261}
   - component: {fileID: 4165132938802046226}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ring2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 7219735695042547073}
   - component: {fileID: 4856990602387669116}
   - component: {fileID: 5032783511706095823}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WaveRings
   m_TagString: Wave
   m_Icon: {fileID: 0}
@@ -181,6 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6e00d6683f57bd4ba88d537b04b2ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
+  myRig: {fileID: 0}
+  waveDur: 0
+  waveScale: {x: 0, y: 0, z: 0}
 --- !u!1 &7859025881848129862
 GameObject:
   m_ObjectHideFlags: 0
@@ -192,7 +196,7 @@ GameObject:
   - component: {fileID: 5008700057867480125}
   - component: {fileID: 4333425193001457435}
   - component: {fileID: 4544680857282525810}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ring3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
