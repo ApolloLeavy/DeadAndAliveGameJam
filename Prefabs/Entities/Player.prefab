@@ -955,9 +955,10 @@ GameObject:
   - component: {fileID: 5634671918083679119}
   - component: {fileID: 3096108521678002272}
   - component: {fileID: 3584898135181062960}
+  - component: {fileID: 2235337836643497331}
   m_Layer: 0
   m_Name: Sword_Long_A.001
-  m_TagString: Player
+  m_TagString: Wave
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1028,6 +1029,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2235337836643497331
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5990287289557800882}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 3096867692681809613, guid: edb36420ea35fbf449f332e0a35fa5e8, type: 3}
 --- !u!1 &6404918334296149843
 GameObject:
   m_ObjectHideFlags: 0
@@ -1460,7 +1483,7 @@ MonoBehaviour:
   maxHp: 0
   canJump: 0
   lastJump: 0
-  jumpSpeed: {x: 0, y: 0}
+  jumpSpeed: {x: 0, y: 0, z: 0}
   canAttack: 0
   lastAttack: 0
   lastDirection: {x: 0, y: 0}
@@ -1500,7 +1523,7 @@ MonoBehaviour:
   look: {fileID: 0}
   cam: {fileID: 0}
   staff: {fileID: 1189283548116235651}
-  sword: {fileID: 0}
+  sword: {fileID: 2211832968536253374}
   reticle: {fileID: 0}
 --- !u!136 &3349325476494960872
 CapsuleCollider:
@@ -1755,6 +1778,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: c3d25745-a506-4c73-8f80-98c16810bbcf
     m_ActionName: Player/Duality[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 24c615a9-cbeb-43ab-919d-b8646f126e44
+    m_ActionName: Player/Menu[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

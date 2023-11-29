@@ -17,10 +17,7 @@ public class Enemy : Entity
     public bool isEntangled;
     public float entangleBounce;
     public float entangleDuration;
-    public GameObject Goal1;
-    public GameObject Goal2;
-    public Vector3 goal1;
-    public Vector3 goal2;
+
     public bool canJumpDelay;
     public float jumpTimer;
     public float shootTimer;
@@ -37,12 +34,9 @@ public class Enemy : Entity
         canJumpDelay = true;
         entangleBounce = 10f;
         entangleDuration = 6f;
-
+        
         player = GameObject.Find("Player");
         myNav = this.gameObject.GetComponent<NavMeshAgent>();
-        goal1 = Goal1.transform.position;
-        goal2 = Goal2.transform.position;
-        myNav.SetDestination(goal2);
         myNav.isStopped = false;
     }
 
@@ -65,26 +59,6 @@ public class Enemy : Entity
 
             myNav.SetDestination(player.transform.position);
             
-        }
-        else
-        {
-            
-            if (goal == 0)
-                myNav.SetDestination(goal1);
-            else
-                myNav.SetDestination(goal2);
-            if (myNav.remainingDistance == 0 && goal == 0)
-            {
-                goal += 1;
-                myNav.SetDestination(goal2);
-                myNav.isStopped = false;
-            }
-            else if (myNav.remainingDistance == 0 && goal == 1)
-            {
-                goal -= 1;
-                myNav.SetDestination(goal1);
-                myNav.isStopped = false;
-            }
         }
 
     }
