@@ -23,6 +23,7 @@ public class Player : Entity
 
     public bool canEntangle;
 
+
     public bool canDuality;
     public bool isDuality; //false is particle, true is wave
 
@@ -31,7 +32,7 @@ public class Player : Entity
     public float aacd;
     public float qecd;
     public float dcd;
-
+    public float attackcd;
     public float qeCost;
 
     public float spinAmount;
@@ -45,11 +46,14 @@ public class Player : Entity
     public float iframes;
     public bool isInvincible;
 
+    public float electronRange;
+
     public GameObject electron;
     public GameObject wave;
     public Transform look;
     public Transform cam;
     public GameObject staff;
+    public GameObject sword;
     public GameObject reticle;
 
     AudioSource hitSound;
@@ -69,7 +73,7 @@ public class Player : Entity
         speed = 10.0f;
         hp = 20.0f;
         maxHp = 20;
-        jumpSpeed = new Vector2(0, 20);
+        jumpSpeed = new Vector3(0, 20, 0);
         decoherence = 0;
         maxDecoherence = 6;
         decoherenceGain = 1;
@@ -83,10 +87,13 @@ public class Player : Entity
         canEntangle = true;
         canDuality = true;
         isDuality = false;
+        canAttack = true;
+        lastAttack = false;
         qtcd = 3;
         spcd = 7;
         aacd = 10;
         qecd = 18;
+        attackcd = .5f;
         dcd = 8;
         spinAmount = 1;
         doubleJump = false;
@@ -96,6 +103,7 @@ public class Player : Entity
         dodgeChance = 0;
         iframes = .67f;
         isInvincible = false;
+        electronRange = 30;
         StartCoroutine(Decoherence());
         
     }
@@ -135,7 +143,7 @@ public class Player : Entity
             }
         
 
-            Physics.Raycast(cam.transform.position + cam.transform.forward * .5f, cam.transform.forward, out RaycastHit check);
+            Physics.Raycast(cam.transform.position + cam.transform.forward * .5f,cam.transform.forward, out RaycastHit check);
 
             if (check.distance <= qeRange && check.collider)
             {
@@ -150,7 +158,12 @@ public class Player : Entity
             else
                 reticle.transform.localScale = new Vector3(1, 1, 1);
 
-
+            if(lastAttack && canAttack)
+            {
+                StartCoroutine(Attack());
+            
+            }
+            
 
 
 
@@ -185,13 +198,37 @@ public class Player : Entity
             look.GetComponent<Follow>().camDelta = Vector2.zero;
         }
     }
-    public new void Fire(InputAction.CallbackContext ev)
+    public void Fire(InputAction.CallbackContext ev)
     {
         if(ev.started)
+            lastAttack = true;
+        if (ev.canceled)
+            lastAttack = false;
+        
+        
+    }
+    IEnumerator Attack()
+    {
+        canAttack = false;
+
+        yield return new WaitForSecondsRealtime(.25f);
+        if (isDuality == false)
         {
+            GameObject tmp = GameObject.Instantiate(electron, staff.transform.position, cam.transform.rotation, null);
+            tmp.transform.LookAt(this.cam.position + cam.transform.forward * electronRange);
+            canAttack = false;
 
         }
+        else if (isDuality == true)
+        {
+            GameObject tmp = GameObject.Instantiate(wave, sword.transform.position, Quaternion.Euler(new Vector3(90, 0, 0)), null);
+            canAttack = false;
+
+        }
+        yield return new WaitForSecondsRealtime(attackcd);
+        canAttack = true;
     }
+    
     IEnumerator Decoherence()
     {
         yield return new WaitForSecondsRealtime(2);
@@ -205,20 +242,24 @@ public class Player : Entity
     {
         if(ev.started && canTunnel && decoherence >= 1)
         {
-            decoherence -= 1;
-            canTunnel = false;
-            if (lastDirection != Vector2.zero)
+            Physics.Raycast(this.transform.position + new Vector3(0, playerHeight, 0), look.transform.forward, out RaycastHit tunnelCheck, qtRange);
+            if (lastDirection != Vector2.zero && tunnelCheck.collider)
             {
+                canTunnel = false;
+                decoherence -= 1;
+                this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * tunnelCheck.distance * lastDirection.y;
+                this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * tunnelCheck.distance * lastDirection.x;
+                StartCoroutine(QTCD());
+            }
+            else if (lastDirection != Vector2.zero)
+            {
+                canTunnel = false;
+                decoherence -= 1;
                 this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * qtRange * lastDirection.y;
                 this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * qtRange * lastDirection.x;
+                StartCoroutine(QTCD());
             }
-                
-            else
-            StartCoroutine(QTCD());
-            
-
-        }
-       
+        }   
     }
     IEnumerator QTCD()
     {
@@ -339,10 +380,10 @@ public class Player : Entity
         yield return new WaitForSecondsRealtime(dcd);
         canDuality = true;
     }
-    public new void Jump(InputAction.CallbackContext ev)
+    public void Jump(InputAction.CallbackContext ev)
     {
-        base.Jump(ev);
-        if(ev.started && canDoubleJump > 0)
+       
+        if (ev.started && canDoubleJump > 0)
         {
             lastJump = true;
             canDoubleJump--;
@@ -353,34 +394,7 @@ public class Player : Entity
         yield return new WaitForSecondsRealtime(iframes);
         isInvincible = false;
     }
-    protected void OnTriggerEnter(Collider other)
-    {
-        
-        if (!isAlignment && !isInvincible)
-        {
-            float rand = 100;
-            if (dodgeChance > 0)
-                rand = Time.realtimeSinceStartup % 100 + 1;
-            if (rand < dodgeChance)
-            {
-                if (other.gameObject.CompareTag("Eyebeam"))
-                {
-                    if (decoherence > 0)
-                        decoherence--;
-                    hp--;
-                    isInvincible = true;
-                }
-                else if (other.gameObject.CompareTag("Pool") || other.gameObject.CompareTag("Poison"))
-                {
-                    hp--;
-                    isInvincible = true;
-                    StartCoroutine(Invincibility());
-                }
-
-            }
-           
-        }
-    }
+   
     private void OnCollisionStay(Collision other)
     {
         if (!isAlignment && !isInvincible)
@@ -391,6 +405,20 @@ public class Player : Entity
             if (rand > dodgeChance)
             {
                 if (other.gameObject.CompareTag("Enemy"))
+                {
+                    hp--;
+                    isInvincible = true;
+                    StartCoroutine(Invincibility());
+                }
+                if (other.gameObject.CompareTag("Eyebeam"))
+                {
+                    if (decoherence > 0)
+                        decoherence--;
+                    hp--;
+                    isInvincible = true;
+                    StartCoroutine(Invincibility());
+                }
+                else if (other.gameObject.CompareTag("Poison"))
                 {
                     hp--;
                     isInvincible = true;

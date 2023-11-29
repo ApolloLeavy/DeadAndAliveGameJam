@@ -16,4 +16,9 @@ public class Item : MonoBehaviour
     {
 
     }
+    public void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider && collision.collider.CompareTag("Player"))
+            pickup();
+    }
 }

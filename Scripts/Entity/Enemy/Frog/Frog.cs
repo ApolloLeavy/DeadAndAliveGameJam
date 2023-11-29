@@ -8,46 +8,28 @@ public class Frog : Enemy
     new void Start()
     {
         base.Start();
-        sightRange = 25;
-        closeRange = 20;
-        jumpSpeed = new Vector2(20, 10);
+        sightRange = 30;
+        closeRange = 30;
+        jumpSpeed = new Vector3(0, 0, 20);
         jumpTimer = 10;
+        shootTimer = 10;
+        hp = 30;
     }
 
     // Update is called once per frame
     new void Update()
     {
         base.Update();
-        this.transform.LookAt(player.transform.position);
-        Physics.Raycast(this.transform.position, this.transform.forward, out check);
-        if (check.collider.tag == "Player" && check.distance <= sightRange)
+        Physics.Raycast(this.transform.position + this.transform.forward, this.transform.forward, out check);
+        if ((transform.position - player.transform.position).magnitude <= closeRange && canJumpDelay)
         {
-            myNav.SetDestination(player.transform.position);
-            if (check.distance <= closeRange && canJumpDelay)
-            {
-                lastJump = true;
-                StartCoroutine(JumpDelay());
-
-            }
+            lastJump = true;
         }
         else
+            lastJump = false;
+        if((transform.position - player.transform.position).magnitude <= sightRange && canAttack)
         {
-            if (goal == 0)
-                myNav.SetDestination(goal1);
-            else
-                myNav.SetDestination(goal2);
-            if (myNav.remainingDistance == 0 && goal == 0)
-            {
-                goal += 1;
-                myNav.SetDestination(goal2);
-                myNav.isStopped = false;
-            }
-            else if (myNav.remainingDistance == 0 && goal == 1)
-            {
-                goal -= 1;
-                myNav.SetDestination(goal1);
-                myNav.isStopped = false;
-            }
+            PoisonFire();
         }
     }
 }

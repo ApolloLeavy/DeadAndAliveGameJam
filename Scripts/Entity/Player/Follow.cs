@@ -7,14 +7,18 @@ public class Follow : MonoBehaviour
 {
     public Transform player;
     public Vector3 offset;
+    public Vector3 wallOffset;
     public GameObject cam;
     public Vector2 camDelta;
     public Vector2 camRot;
+    public Rigidbody myRig;
     public float sensitivity;
     // Start is called before the first frame update
     void Start()
     {
         sensitivity = 0.1f;
+        wallOffset = Vector3.zero;
+        myRig = this.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -26,9 +30,12 @@ public class Follow : MonoBehaviour
             camRot.y = 100;
         if (camRot.y < -60)
             camRot.y = -60;
-        transform.position = player.position + offset;
+        transform.position = player.position + offset + wallOffset;
         transform.rotation = Quaternion.Euler(camRot.y,camRot.x,0);
          
     }
-    
+    private void OnTriggerStay(Collider other)
+    {
+        
+    }
 }

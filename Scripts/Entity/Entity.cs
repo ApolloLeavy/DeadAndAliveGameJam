@@ -10,9 +10,9 @@ public class Entity : MonoBehaviour
     public float maxHp;
     public bool canJump;
     public bool lastJump;
-    public Vector2 jumpSpeed;
-    public bool canFire;
-    public bool lastFire;
+    public Vector3 jumpSpeed;
+    public bool canAttack;
+    public bool lastAttack;
     
     public Vector2 lastDirection;
     public Rigidbody myRig;
@@ -26,8 +26,8 @@ public class Entity : MonoBehaviour
         canJump = true;
         lastJump = false;
         //jumpSpeed
-        canFire = true;
-        lastFire = false;
+        canAttack = true;
+        lastAttack = false;
         myRig = this.GetComponent<Rigidbody>();
         myAnim = this.GetComponent<Animator>();
     }
@@ -39,38 +39,8 @@ public class Entity : MonoBehaviour
         {
             //myAnim.SetInteger("Action", 3);
         }
-        if (lastJump && canJump)
-        {
-            myRig.velocity += new Vector3(jumpSpeed.x, jumpSpeed.y, 0);
-            lastJump = false;
-            canJump = false;
-        }
-        else if (!canJump && myRig.velocity.y <= 0)
-        {
-
-            RaycastHit[] checks = Physics.RaycastAll(this.myRig.position, this.transform.up * -1);
-            if (checks != null)
-            {
-                foreach (RaycastHit check in checks)
-                {
-                    if (check.distance < .5f && (check.collider.gameObject.tag == "World"))
-                        canJump = true;
-                }
-            }
-
-        }
-    }
-   
-    public void Fire(InputAction.CallbackContext ev)
-    {
-        if (ev.started)
-            lastFire = true;
-    }
-
-    public void Jump(InputAction.CallbackContext ev)
-    {
-        if(ev.started && canJump == true)
-            lastJump = true;
+        
         
     }
+
 }

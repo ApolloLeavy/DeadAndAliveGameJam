@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,7 +13,7 @@ public class Enemy : Entity
     public GameObject player;
     public GameObject tangled;
     public RaycastHit check;
-    public int spin;
+    public float spin;
     public bool isEntangled;
     public float entangleBounce;
     public float entangleDuration;
@@ -24,11 +23,13 @@ public class Enemy : Entity
     public Vector3 goal2;
     public bool canJumpDelay;
     public float jumpTimer;
+    public float shootTimer;
     public int goal = 1;
+    public Transform eyebeamLoc;
 
     public NavMeshAgent myNav = null;
     // Start is called before the first frame update
-    new void Start()
+    new public void Start()
     {
         base.Start();
         spin = 0;
@@ -36,6 +37,7 @@ public class Enemy : Entity
         canJumpDelay = true;
         entangleBounce = 10f;
         entangleDuration = 6f;
+
         player = GameObject.Find("Player");
         myNav = this.gameObject.GetComponent<NavMeshAgent>();
         goal1 = Goal1.transform.position;
@@ -45,18 +47,28 @@ public class Enemy : Entity
     }
 
     // Update is called once per frame
-    new void Update()
+    new public void Update()
     {
         base.Update();
-        this.transform.LookAt(player.transform.position);
-        Physics.Raycast(this.transform.position, this.transform.forward, out check);
-        if (check.collider.CompareTag("Player") && check.distance <= sightRange)
+
+        if (lastJump && canJumpDelay)
         {
+            myRig.velocity = new Vector3(this.transform.forward.x * jumpSpeed.x, this.transform.forward.y * jumpSpeed.y, this.transform.forward.z * jumpSpeed.z);
+            lastJump = false;
+            canJumpDelay = false;
+            StartCoroutine(JumpDelay());
+        }
+        this.transform.LookAt(player.transform.position);
+        Physics.Raycast(this.transform.position + this.transform.forward, this.transform.forward, out check);
+        if (check.distance <= sightRange && check.collider)
+        {
+
             myNav.SetDestination(player.transform.position);
             
         }
         else
         {
+            
             if (goal == 0)
                 myNav.SetDestination(goal1);
             else
@@ -74,20 +86,43 @@ public class Enemy : Entity
                 myNav.isStopped = false;
             }
         }
+
     }
+
     public IEnumerator JumpDelay()
     {
-        canJumpDelay = false;
+       
         yield return new WaitForSecondsRealtime(jumpTimer);
         canJumpDelay = true;
+        myRig.velocity = Vector3.zero;
     }
-    public float DistanceFromPlayer()
+    public IEnumerator ShootDelay()
     {
-        return 100.0f;
+        
+        yield return new WaitForSecondsRealtime(shootTimer);
+        canAttack = true;
     }
     public void EyeBeamFire()
     {
+        canAttack = false;
+        GameObject tmp1 = GameObject.Instantiate(Eyebeam, eyebeamLoc.transform.position + this.transform.forward, this.transform.rotation, null);
+        GameObject tmp2 = GameObject.Instantiate(Eyebeam, eyebeamLoc.transform.position + this.transform.forward + this.transform.forward, this.transform.rotation, null);
+        GameObject tmp3 = GameObject.Instantiate(Eyebeam, eyebeamLoc.transform.position + this.transform.forward - this.transform.forward, this.transform.rotation, null);
+        tmp1.transform.LookAt(worldPosition: player.transform.position + new Vector3(0, player.GetComponent<Player>().playerHeight,0));
+        tmp2.transform.LookAt(worldPosition: player.transform.position + new Vector3(0, player.GetComponent<Player>().playerHeight, 0) + this.transform.forward * player.GetComponent<Player>().playerHeight);
+        tmp3.transform.LookAt(worldPosition: player.transform.position + new Vector3(0, player.GetComponent<Player>().playerHeight, 0) - this.transform.forward * player.GetComponent<Player>().playerHeight);
+ 
 
+        StartCoroutine(ShootDelay());
+    }
+    public void PoisonFire()
+    {
+        canAttack = false;
+        GameObject tmp1 = GameObject.Instantiate(poison, this.transform.position + this.transform.up * 4, this.transform.rotation, null);
+        tmp1.transform.LookAt(player.transform.position);
+        tmp1.transform.Rotate(new Vector3(90, 0, 0));
+
+        StartCoroutine(ShootDelay());
     }
     public void getEntangled()
     {
@@ -127,19 +162,24 @@ public class Enemy : Entity
     }
     public void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "electron")
+        if(other.gameObject.tag == "Electron")
         {
-            spin += other.GetComponent<Electron>().spin;
+            spin += other.GetComponent<Electron>().player.GetComponent<Player>().spinAmount;
             hp -= 1;
             if (tangled)
                 tangled.GetComponent<Enemy>().hp -= 1;
         }
-        if (other.gameObject.tag == "Wave" || other.gameObject.tag == "Sword")
+        if (other.gameObject.tag == "Wave" || other.gameObject.tag == "The Wave")
         {
             hp -= (1 + spin);
             if (tangled)
                 tangled.GetComponent<Enemy>().hp -= (1 + spin);
         }
         
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.CompareTag("Player") || collision.collider.CompareTag("World"))
+            myRig.velocity = Vector3.zero;
     }
 }
