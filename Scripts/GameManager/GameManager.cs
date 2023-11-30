@@ -39,7 +39,6 @@ public class GameManager : MonoBehaviour
         player = GameObject.Find("Player");
         canvas = GameObject.Find("Canvas");
         look = GameObject.Find("Look");
-        look.SetActive(false);
         reticle = GameObject.Find("Reticle");
         reticle.SetActive(false);
         HUD = GameObject.Find("HUD");
@@ -64,7 +63,6 @@ public class GameManager : MonoBehaviour
         startMenu.SetActive(false);
         Cursor.visible = false;
         reticle.SetActive(true);
-        look.SetActive(true);
         HUD.SetActive(true);
         
     }
