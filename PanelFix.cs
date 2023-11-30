@@ -1,9 +1,10 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UIAbility : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class PanelFix : MonoBehaviour,  IPointerExitHandler
 {
 
     public GameObject desc;
@@ -16,16 +17,13 @@ public class UIAbility : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     // Update is called once per frame
     void Update()
     {
-       
+
     }
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        desc.SetActive(true);
-    }
+
 
     public void OnPointerExit(PointerEventData eventData)
     {
         desc.SetActive(false);
-        
+
     }
 }

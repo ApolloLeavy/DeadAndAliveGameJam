@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        /*
+        
         pauseMenu = GameObject.Find("PauseMenu");
         pauseMenu.SetActive(false);
         startMenu = GameObject.Find("StartMenu");
@@ -27,15 +27,13 @@ public class GameManager : MonoBehaviour
         reticle = GameObject.Find("Reticle");
         reticle.SetActive(false);
         
-        */
+        
         DontDestroyOnLoad(canvas);
         DontDestroyOnLoad(player);
         DontDestroyOnLoad(look);
-        DontDestroyOnLoad(pauseMenu);
-        DontDestroyOnLoad(startMenu);
-        DontDestroyOnLoad(reticle);
+
     }
-    void StartGame()
+    public void StartGame()
     {
         startMenu.SetActive(false);
         Cursor.visible = false;
@@ -49,16 +47,7 @@ public class GameManager : MonoBehaviour
     {
         
     }
-    public void Pause()
-    {
-        pauseMenu.SetActive(false);
-        Time.timeScale = 0;
-    }
-    public void Resume()
-    {
-        pauseMenu.SetActive(true);
-        Time.timeScale = 1;
-    }
+    
     public void Quit()
     {
         Application.Quit();

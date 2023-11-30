@@ -55,6 +55,7 @@ public class Player : Entity
     public GameObject staff;
     public GameObject sword;
     public GameObject reticle;
+    public GameManager gm;
 
     AudioSource hitSound;
     AudioSource particleSound;
@@ -104,6 +105,7 @@ public class Player : Entity
         iframes = .67f;
         isInvincible = false;
         electronRange = 30;
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         StartCoroutine(Decoherence());
         
     }
@@ -228,7 +230,22 @@ public class Player : Entity
         yield return new WaitForSecondsRealtime(attackcd);
         canAttack = true;
     }
-    
+    public void Pause()
+    {
+        if (gm.pauseMenu.activeSelf == false)
+        {
+            gm.pauseMenu.SetActive(true);
+            Time.timeScale = 0;
+        }
+        else
+        {
+            gm.pauseMenu.SetActive(false);
+            Time.timeScale = 1;
+        }
+
+
+
+    }
     IEnumerator Decoherence()
     {
         yield return new WaitForSecondsRealtime(2);
