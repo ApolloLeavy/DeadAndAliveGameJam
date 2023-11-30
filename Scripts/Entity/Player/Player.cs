@@ -235,17 +235,20 @@ public class Player : Entity
         if (gm.pauseMenu.activeSelf == false)
         {
             gm.pauseMenu.SetActive(true);
+            gm.HUD.SetActive(false);
+
             Time.timeScale = 0;
         }
         else
         {
             gm.pauseMenu.SetActive(false);
             Time.timeScale = 1;
+            gm.HUD.SetActive(true);
+
         }
-
-
-
+        
     }
+    
     IEnumerator Decoherence()
     {
         yield return new WaitForSecondsRealtime(2);
@@ -383,6 +386,7 @@ public class Player : Entity
     {
         if (ev.started && canDuality)
         {
+            canDuality = false;
             if (isDuality == true)
                 isDuality = false;
             else
@@ -394,7 +398,7 @@ public class Player : Entity
     IEnumerator DCD()
     {
         if (dcd > 0)
-        yield return new WaitForSecondsRealtime(dcd);
+            yield return new WaitForSecondsRealtime(dcd);
         canDuality = true;
     }
     public void Jump(InputAction.CallbackContext ev)
