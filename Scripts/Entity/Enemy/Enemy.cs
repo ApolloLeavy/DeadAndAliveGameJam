@@ -177,4 +177,15 @@ public class Enemy : Entity
 
         }
     }
+    public void DieTrigger()
+    {
+        StartCoroutine(Die());
+    }
+    public IEnumerator Die()
+    {
+        myAnim.SetInteger("Anim", 2);
+        dieSound.Play();
+        yield return new WaitForSecondsRealtime(1);
+        Destroy(this.gameObject);
+    }
 }

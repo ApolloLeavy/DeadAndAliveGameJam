@@ -22,8 +22,11 @@ public class Wave : PlayerProjectile
     }
     public new void OnTriggerEnter(Collider other)
     {
-        
-        
+        if (other.GetComponent<Enemy>() && other.GetComponent<Enemy>().hp <= 0)
+        {
+            other.gameObject.GetComponent<Enemy>().DieTrigger();
+
+        }
     }
     
 }

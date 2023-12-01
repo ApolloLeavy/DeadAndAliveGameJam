@@ -49,7 +49,7 @@ public class Player : Entity
     public Transform look;
     public Transform cam;
     public GameObject staff;
-    public GameObject sword;
+    public GameObject waveSpawn;
     public GameObject reticle;
     public GameManager gm;
     public GameObject bone;
@@ -72,7 +72,7 @@ public class Player : Entity
         lastAttack = false;
         myRig = this.GetComponent<Rigidbody>();
         myAnim = this.GetComponentInChildren<Animator>();
-        playerHeight = 4.75f;
+        playerHeight = 2;
         speed = 10.0f;
         hp = 20.0f;
         maxHp = 20;
@@ -105,6 +105,7 @@ public class Player : Entity
         isInvincible = false;
         electronRange = 30;
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        
         StartCoroutine(Decoherence());
         
     }
@@ -134,9 +135,9 @@ public class Player : Entity
                 {
                     foreach (RaycastHit ready in checks)
                     {
-                        if (ready.distance < 1f && (ready.collider.gameObject.CompareTag("World")))
+                        if (ready.distance < .5f && (ready.collider.gameObject.CompareTag("World")))
                         {
-                        canJump = true;
+                            canJump = true;
                         }
 
                     }
@@ -147,7 +148,7 @@ public class Player : Entity
         
             Physics.Raycast(cam.transform.position + cam.transform.forward * .5f,cam.transform.forward, out RaycastHit check);
 
-            if (check.distance <= qeRange && check.collider)
+            if (check.collider && check.distance <= qeRange)
             {
                 if (check.collider.gameObject.CompareTag("Enemy"))
                 {
@@ -162,12 +163,12 @@ public class Player : Entity
 
             if(lastAttack && canAttack)
             {
-            myAnim.SetInteger("Anim", 4);
-            StartCoroutine(Attack());
+                myAnim.SetInteger("Anim", 4);
+                StartCoroutine(Attack());
             
             }
 
-        bone.transform.localRotation.eulerAngles.Set(look.transform.rotation.eulerAngles.x+ transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, look.transform.rotation.eulerAngles.z+ transform.rotation.eulerAngles.z);
+        bone.transform.rotation.eulerAngles.Set(look.transform.rotation.eulerAngles.x+ bone.transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, look.transform.rotation.eulerAngles.z+ bone.transform.rotation.eulerAngles.z);
         
 
     }
@@ -224,11 +225,7 @@ public class Player : Entity
             lastAttack = true;
 
         }
-        if(ev.performed)
-        {
-            
 
-        }
         if (ev.canceled)
             lastAttack = false;
         
@@ -252,7 +249,7 @@ public class Player : Entity
         else if (isDuality == true)
         {
             
-            GameObject tmp = GameObject.Instantiate(wave, sword.transform.position, Quaternion.Euler(new Vector3(90, 0, 0)), null);
+            GameObject tmp = GameObject.Instantiate(wave, waveSpawn.transform.position, Quaternion.Euler(new Vector3(90, 0, 0)), null);
             canAttack = false;
             waveSound.Play();
            
@@ -270,7 +267,7 @@ public class Player : Entity
             gm.pauseMenu.SetActive(true);
             gm.HUD.SetActive(false);
             gm.reticle.SetActive(false);
-
+            Cursor.visible = true;
 
             Time.timeScale = 0;
         }
@@ -280,6 +277,7 @@ public class Player : Entity
             Time.timeScale = 1;
             gm.HUD.SetActive(true);
             gm.reticle.SetActive(true);
+            Cursor.visible = false;
 
 
         }
@@ -309,6 +307,15 @@ public class Player : Entity
                 this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * tunnelCheck.distance * lastDirection.x;
                 StartCoroutine(QTCD());
             }
+            else
+            {
+                tunnelSound.Play();
+                canTunnel = false;
+                decoherence -= 1;
+                this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * qtRange * lastDirection.y;
+                this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * qtRange * lastDirection.x;
+                StartCoroutine(QTCD());
+            }
             
         }   
     }
@@ -330,14 +337,9 @@ public class Player : Entity
             {
                 Physics.Raycast(this.transform.position + new Vector3(0, playerHeight, 0), this.transform.up, out RaycastHit superCheck);
 
-                if (superCheck.distance <= spRange)
+                if (superCheck.collider)
                 {
-                    if (superCheck.collider.gameObject.CompareTag("Enemy") || superCheck.collider.gameObject.CompareTag("World"))
-
-                    {
                         this.transform.position += new Vector3(0, superCheck.distance - playerHeight, 0);
-                        
-                    }
                 }
                 else
                     this.transform.position += new Vector3(0, spRange, 0);
@@ -392,27 +394,28 @@ public class Player : Entity
     {
         if (ev.started && canEntangle && decoherence >= qeCost)
         {
-            entangleSound.Play();
-            decoherence -= 3;
-            canEntangle = false;
+            
             Physics.Raycast(cam.transform.position + cam.transform.forward, cam.transform.forward, out RaycastHit check);
             
                 if (check.distance <= qeRange)
                 {
                     if (check.collider.gameObject.CompareTag("Enemy"))
-
                     {
+                        entangleSound.Play();
+                        decoherence -= 3;
+                        canEntangle = false;
                         check.collider.gameObject.GetComponentInParent<Enemy>().getEntangled();
-
+                        StartCoroutine(QECD());
 
                     }
                 }
-            StartCoroutine(QECD());
+            
             
         }
     }
     IEnumerator QECD()
     {
+        
         yield return new WaitForSecondsRealtime(qecd);
         canEntangle = true;
     }
@@ -503,7 +506,7 @@ public class Player : Entity
 
         }
     }
-    IEnumerator Die()
+    public IEnumerator Die()
     {
         myAnim.SetInteger("Anim", 2);
         yield return new WaitForSecondsRealtime(1);

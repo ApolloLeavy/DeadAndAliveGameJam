@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -129,7 +128,7 @@ public class GameManager : MonoBehaviour
         decoherenceAmount.GetComponent<Text>().text = player.GetComponent<Player>().decoherence.ToString();
         if (player.GetComponent<Player>().canDuality)
         {
-            dualitycd.GetComponent<Text>().text = player.GetComponent<Player>().dcd.ToString();
+            dualitycd.GetComponent<Text>().text = "RMB";
             dualityCD = player.GetComponent<Player>().dcd;
         }
         else
@@ -139,7 +138,7 @@ public class GameManager : MonoBehaviour
         }
         if (player.GetComponent<Player>().canTunnel)
         {
-            tunnelcd.GetComponent<Text>().text = player.GetComponent<Player>().qtcd.ToString();
+            tunnelcd.GetComponent<Text>().text = "LShft";
             tunnelCD = player.GetComponent<Player>().qtcd;
         }
         else
@@ -149,7 +148,7 @@ public class GameManager : MonoBehaviour
         }
         if (player.GetComponent<Player>().canSuper)
         {
-            superPositioncd.GetComponent<Text>().text = player.GetComponent<Player>().spcd.ToString();
+            superPositioncd.GetComponent<Text>().text = "LCtrl";
             superPositionCD = player.GetComponent<Player>().spcd;
         }
         else
@@ -159,7 +158,7 @@ public class GameManager : MonoBehaviour
         }
         if (player.GetComponent<Player>().canAlignment)
         {
-            alignmentcd.GetComponent<Text>().text = player.GetComponent<Player>().aacd.ToString();
+            alignmentcd.GetComponent<Text>().text = "E";
             alignmentCD = player.GetComponent<Player>().aacd;
         }
         else
@@ -169,7 +168,7 @@ public class GameManager : MonoBehaviour
         }
         if (player.GetComponent<Player>().canEntangle)
         {
-            entanglecd.GetComponent<Text>().text = player.GetComponent<Player>().qecd.ToString();
+            entanglecd.GetComponent<Text>().text = "R";
             entangleCD = player.GetComponent<Player>().qecd;
         }
         else
