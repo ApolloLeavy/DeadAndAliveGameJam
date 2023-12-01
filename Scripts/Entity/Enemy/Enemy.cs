@@ -35,7 +35,7 @@ public class Enemy : Entity
         isEntangled = false;
         canJumpDelay = true;
         entangleBounce = 10f;
-        entangleDuration = 6f;
+        entangleDuration = 10f;
         
         player = GameObject.Find("Player");
         if(this.gameObject.GetComponent<NavMeshAgent>())
@@ -112,16 +112,13 @@ public class Enemy : Entity
     }
     public void getEntangled()
     {
-        RaycastHit[] checks = Physics.SphereCastAll(this.transform.position, entangleBounce, this.transform.up * -1);
-        if (checks.Length != 0)
-        {
-
+        isEntangled = true;
+        RaycastHit[] checks = Physics.SphereCastAll(this.transform.position, entangleBounce, this.transform.forward);
+        
             foreach (RaycastHit check in checks)
             {
-                Debug.Log(check.collider.gameObject.name);
-                if (check.collider.gameObject.CompareTag("Enemy") && check.collider.transform != this.transform)
+                if (check.collider.gameObject.CompareTag("Enemy") && !check.collider.gameObject.GetComponent<Enemy>().isEntangled)
                 {
-                    isEntangled = true;
                     tangled = check.collider.gameObject;
                     check.collider.gameObject.GetComponent<Enemy>().isEntangled = true;
                     check.collider.gameObject.GetComponent<Enemy>().tangled = this.gameObject;
@@ -130,7 +127,6 @@ public class Enemy : Entity
                 }
 
             }
-        }
         StartCoroutine(GetEntangled());
     }
     IEnumerator GetEntangled()

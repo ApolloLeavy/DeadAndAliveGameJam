@@ -146,7 +146,7 @@ public class Player : Entity
             }
 
         
-            Physics.Raycast(cam.transform.position + cam.transform.forward * .5f,cam.transform.forward, out RaycastHit check);
+            Physics.Raycast(cam.transform.position + cam.transform.forward * 7.5f,cam.transform.forward, out RaycastHit check);
 
             if (check.collider && check.distance <= qeRange)
             {
@@ -168,14 +168,13 @@ public class Player : Entity
             
             }
 
-        bone.transform.rotation.eulerAngles.Set(look.transform.rotation.eulerAngles.x+ bone.transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, look.transform.rotation.eulerAngles.z+ bone.transform.rotation.eulerAngles.z);
-        
-
+        if (lastDirection != Vector2.zero)
+                bone.transform.rotation = Quaternion.RotateTowards(bone.transform.rotation, Quaternion.Euler(new Vector3(bone.transform.localEulerAngles.x, 90 - Mathf.Rad2Deg * (Mathf.Atan2(lastDirection.y, lastDirection.x)) + look.transform.eulerAngles.y, bone.transform.localEulerAngles.z)), 300 * Time.deltaTime);
     }
 
     IEnumerator Jump()
     {
-        yield return new WaitForSecondsRealtime(.667f);
+        yield return new WaitForSecondsRealtime(.5f);
         myAnim.SetInteger("Anim", 0);
 
 
@@ -199,10 +198,12 @@ public class Player : Entity
 
         if (ev.performed)
             {
-                lastDirection = ev.ReadValue<Vector2>();
+            myAnim.SetInteger("Anim", 3);
+            lastDirection = ev.ReadValue<Vector2>();
             }
         if (ev.canceled)
         {
+            myAnim.SetInteger("Anim", 0);
             lastDirection = Vector2.zero;
 
         }
@@ -394,17 +395,16 @@ public class Player : Entity
     {
         if (ev.started && canEntangle && decoherence >= qeCost)
         {
-            
-            Physics.Raycast(cam.transform.position + cam.transform.forward, cam.transform.forward, out RaycastHit check);
-            
-                if (check.distance <= qeRange)
+
+            Physics.Raycast(cam.transform.position + cam.transform.forward * 7.5f, cam.transform.forward, out RaycastHit check);
+            if (check.collider && check.distance <= qeRange)
                 {
                     if (check.collider.gameObject.CompareTag("Enemy"))
                     {
                         entangleSound.Play();
                         decoherence -= 3;
                         canEntangle = false;
-                        check.collider.gameObject.GetComponentInParent<Enemy>().getEntangled();
+                        check.collider.gameObject.GetComponent<Enemy>().getEntangled();
                         StartCoroutine(QECD());
 
                     }
