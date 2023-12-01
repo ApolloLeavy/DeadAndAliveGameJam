@@ -36,17 +36,11 @@ public class Entity : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
-        if (lastDirection != Vector2.zero)
-        {
-            myAnim.SetInteger("Anim", 3);
-
-        }
-        if (lastDirection == Vector2.zero)
+        if(lastDirection == Vector2.zero)
         {
             myAnim.SetInteger("Anim", 0);
-
         }
-        
+
 
     }
 

@@ -10,7 +10,7 @@ public class Eyeball : Enemy
     new void Start()
     {
         base.Start();
-        
+        myAnim = this.GetComponentInChildren<Animator>();
         sightRange = 60;
         closeRange = 10;
         shootTimer = 5;
@@ -32,6 +32,7 @@ public class Eyeball : Enemy
             myNav.isStopped = true;
             myNav.SetDestination(this.transform.position - new Vector3(-1, 0, 0));
             myNav.isStopped = false;
+            myAnim.SetInteger("Anim", 2);
         }
         
         

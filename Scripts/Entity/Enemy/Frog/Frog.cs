@@ -9,6 +9,7 @@ public class Frog : Enemy
     new void Start()
     {
         base.Start();
+        myAnim = this.GetComponentInChildren<Animator>();
         sightRange = 30;
         closeRange = 30;
         jumpSpeed = new Vector3(0, 0, 20);

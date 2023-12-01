@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     public int currentLevel = 0;
     public GameObject pauseMenu;
     public GameObject startMenu;
+    public GameObject gameOver;
+    public GameObject gameWin;
     public GameObject player;
     public GameObject canvas;
     public GameObject look;
@@ -40,6 +42,11 @@ public class GameManager : MonoBehaviour
         pauseMenu = GameObject.Find("PauseMenu");
         pauseMenu.SetActive(false);
         startMenu = GameObject.Find("StartMenu");
+        gameOver = GameObject.Find("GameOver");
+
+        gameWin = GameObject.Find("Victory");
+        gameWin.SetActive(false);
+        gameOver.SetActive(false);
         player = GameObject.Find("Player");
         canvas = GameObject.Find("Canvas");
         look = GameObject.Find("Look");
@@ -56,6 +63,7 @@ public class GameManager : MonoBehaviour
         superPositionCD = player.GetComponent<Player>().spcd;
         alignmentCD = player.GetComponent<Player>().aacd;
         entangleCD = player.GetComponent<Player>().qecd;
+        
 
         DontDestroyOnLoad(canvas);
         DontDestroyOnLoad(player);
@@ -84,9 +92,25 @@ public class GameManager : MonoBehaviour
     {
         //SceneManager.UnloadSceneAsync(sceneName: "Level" + (currentLevel));
         currentLevel++;
-        SceneManager.LoadScene(currentLevel);
-        player.transform.position = new Vector3(0, 0, 0);
+        if (currentLevel == 3)
+        {
+            gameWin.SetActive(true);
+            Time.timeScale = 0;
+            
+        }
+        else
+        {
+            SceneManager.LoadScene(currentLevel);
+            player.transform.position = new Vector3(0, 0, 0);
+        }
         
+        
+    }
+    public void Lose()
+    {
+        gameOver.SetActive(true);
+        Time.timeScale = 0;
+        return;
     }
     public void Quit()
     {

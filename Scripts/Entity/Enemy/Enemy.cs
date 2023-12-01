@@ -38,14 +38,16 @@ public class Enemy : Entity
         entangleDuration = 6f;
         
         player = GameObject.Find("Player");
-        myNav = this.gameObject.GetComponent<NavMeshAgent>();
+        if(this.gameObject.GetComponent<NavMeshAgent>())
+            myNav = this.gameObject.GetComponent<NavMeshAgent>();
         myNav.isStopped = false;
+        
     }
 
     // Update is called once per frame
     new public void Update()
     {
-        base.Update();
+       
 
         if (lastJump && canJumpDelay)
         {

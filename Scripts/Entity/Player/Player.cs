@@ -60,6 +60,7 @@ public class Player : Entity
     public AudioSource alignmentSound;
     public AudioSource superPositionSound;
     public AudioSource dualitySound;
+    public bool onDelay;
 
 
     // Start is called before the first frame update
@@ -111,7 +112,8 @@ public class Player : Entity
     // Update is called once per frame
     new void Update()
     {
-        base.Update();
+        if (lastDirection == Vector2.zero && !onDelay)
+           StartCoroutine(DelayIdle());
         myRig.velocity =  new Vector3(look.forward.x,0, look.forward.z).normalized * speed * lastDirection.y + new Vector3(0, myRig.velocity.y, 0);
         myRig.velocity += new Vector3(look.right.x, 0, look.right.z).normalized * speed * lastDirection.x;
 
@@ -132,10 +134,9 @@ public class Player : Entity
                 {
                     foreach (RaycastHit ready in checks)
                     {
-                        if (ready.distance < .5f && (ready.collider.gameObject.CompareTag("World")))
+                        if (ready.distance < 1f && (ready.collider.gameObject.CompareTag("World")))
                         {
-                            
-                            canJump = true;
+                        canJump = true;
                         }
 
                     }
@@ -161,20 +162,32 @@ public class Player : Entity
 
             if(lastAttack && canAttack)
             {
-                StartCoroutine(Attack());
+            myAnim.SetInteger("Anim", 4);
+            StartCoroutine(Attack());
             
             }
 
         bone.transform.localRotation.eulerAngles.Set(look.transform.rotation.eulerAngles.x+ transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, look.transform.rotation.eulerAngles.z+ transform.rotation.eulerAngles.z);
-
+        
 
     }
+
     IEnumerator Jump()
     {
-        
         yield return new WaitForSecondsRealtime(.667f);
+        myAnim.SetInteger("Anim", 0);
+
 
         myRig.velocity += new Vector3(jumpSpeed.x, jumpSpeed.y, 0);
+    }
+    IEnumerator DelayIdle()
+    {
+        onDelay = true;
+
+        yield return new WaitForSecondsRealtime(2);
+        myAnim.SetInteger("Anim", 0);
+        onDelay = false;
+
     }
     public void onMove(InputAction.CallbackContext ev)
     {
@@ -207,7 +220,15 @@ public class Player : Entity
     public void Fire(InputAction.CallbackContext ev)
     {
         if(ev.started)
+        {
             lastAttack = true;
+
+        }
+        if(ev.performed)
+        {
+            
+
+        }
         if (ev.canceled)
             lastAttack = false;
         
@@ -219,10 +240,9 @@ public class Player : Entity
         canAttack = false;
 
         yield return new WaitForSecondsRealtime(.25f);
-        
+        myAnim.SetInteger("Anim", 0);
         if (isDuality == false)
         {
-            myAnim.SetInteger("Anim", 4);
             GameObject tmp = GameObject.Instantiate(electron, staff.transform.position, cam.transform.rotation, null);
             tmp.transform.LookAt(this.cam.position + cam.transform.forward * electronRange);
             canAttack = false;
@@ -231,7 +251,7 @@ public class Player : Entity
         }
         else if (isDuality == true)
         {
-            myAnim.SetInteger("Anim", 4);
+            
             GameObject tmp = GameObject.Instantiate(wave, sword.transform.position, Quaternion.Euler(new Vector3(90, 0, 0)), null);
             canAttack = false;
             waveSound.Play();
@@ -242,6 +262,7 @@ public class Player : Entity
         
         canAttack = true;
     }
+
     public void Pause()
     {
         if (gm.pauseMenu.activeSelf == false)
@@ -441,6 +462,12 @@ public class Player : Entity
                     hp--;
                     isInvincible = true;
                     StartCoroutine(Invincibility());
+                    if (hp <= 0)
+                    {
+                        StartCoroutine(Die());
+                    }
+                        
+                        
                 }
                 if (other.gameObject.CompareTag("Eyebeam"))
                 {
@@ -451,6 +478,10 @@ public class Player : Entity
                     hp--;
                     isInvincible = true;
                     StartCoroutine(Invincibility());
+                    if (hp <= 0)
+                    {
+                        StartCoroutine(Die());
+                    }
                 }
                 else if (other.gameObject.CompareTag("Poison"))
                 {
@@ -459,9 +490,20 @@ public class Player : Entity
                     hp--;
                     isInvincible = true;
                     StartCoroutine(Invincibility());
+                    if (hp <= 0)
+                    {
+                        StartCoroutine(Die());
+                    }
                 }
             }
 
         }
+    }
+    IEnumerator Die()
+    {
+        myAnim.SetInteger("Anim", 2);
+        yield return new WaitForSecondsRealtime(1);
+        gm.Lose();
+        Time.timeScale = 0;
     }
 }
