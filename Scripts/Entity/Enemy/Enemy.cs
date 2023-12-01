@@ -21,10 +21,12 @@ public class Enemy : Entity
     public bool canJumpDelay;
     public float jumpTimer;
     public float shootTimer;
-    public int goal = 1;
     public Transform eyebeamLoc;
 
     public NavMeshAgent myNav = null;
+    public AudioSource dashSound;
+
+
     // Start is called before the first frame update
     new public void Start()
     {
@@ -47,14 +49,12 @@ public class Enemy : Entity
 
         if (lastJump && canJumpDelay)
         {
-            myRig.velocity = new Vector3(this.transform.forward.x * jumpSpeed.x, this.transform.forward.y * jumpSpeed.y, this.transform.forward.z * jumpSpeed.z);
-            lastJump = false;
-            canJumpDelay = false;
+           
             StartCoroutine(JumpDelay());
         }
         this.transform.LookAt(player.transform.position);
         Physics.Raycast(this.transform.position + this.transform.forward, this.transform.forward, out check);
-        if (check.distance <= sightRange && check.collider)
+        if ((this.transform.position - player.transform.position).magnitude <= sightRange)
         {
 
             myNav.SetDestination(player.transform.position);
@@ -65,13 +65,23 @@ public class Enemy : Entity
 
     public IEnumerator JumpDelay()
     {
-       
+        myNav.speed *= 2;
+
+        lastJump = false;
+        canJumpDelay = false;
+        myAnim.SetInteger("Anim", 2);
+        dashSound.Play();
+        yield return new WaitForSecondsRealtime(2);
+        myNav.speed /= 2;
+        myAnim.SetInteger("Anim", -1);
         yield return new WaitForSecondsRealtime(jumpTimer);
         canJumpDelay = true;
+        
         myRig.velocity = Vector3.zero;
     }
     public IEnumerator ShootDelay()
     {
+        attackSound.Play();
         
         yield return new WaitForSecondsRealtime(shootTimer);
         canAttack = true;
@@ -138,6 +148,8 @@ public class Enemy : Entity
     {
         if(other.gameObject.tag == "Electron")
         {
+            myAnim.SetInteger("Anim", 0);
+            hitSound.Play();   
             spin += other.GetComponent<Electron>().player.GetComponent<Player>().spinAmount;
             hp -= 1;
             if (tangled)
@@ -145,6 +157,9 @@ public class Enemy : Entity
         }
         if (other.gameObject.tag == "Wave" || other.gameObject.tag == "The Wave")
         {
+            hitSound.Play();
+            myAnim.SetInteger("Anim", 0);
+
             hp -= (1 + spin);
             if (tangled)
                 tangled.GetComponent<Enemy>().hp -= (1 + spin);
@@ -154,6 +169,10 @@ public class Enemy : Entity
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.collider.CompareTag("Player") || collision.collider.CompareTag("World"))
+        {
+            myAnim.SetInteger("Anim", -1);
             myRig.velocity = Vector3.zero;
+
+        }
     }
 }

@@ -7,6 +7,14 @@ public class AntidecayAmulet : Item
     // Start is called before the first frame update
     public new void pickup()
     {
-        player.decoherenceGain++;
+        player.GetComponent<Player>().decoherenceGain++;
+    }
+    public new void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider && collision.collider.CompareTag("Player"))
+        {
+            this.pickup();
+            Destroy(this.gameObject);
+        }
     }
 }

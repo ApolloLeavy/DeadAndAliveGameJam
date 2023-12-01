@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Frog : Enemy
 {
+    
     // Start is called before the first frame update
     new void Start()
     {

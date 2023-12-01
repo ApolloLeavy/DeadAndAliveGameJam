@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -37,9 +36,6 @@ public class Player : Entity
 
     public float spinAmount;
 
-    public bool doubleJump;
-    public int doubleJumps;
-    public int canDoubleJump;
 
     public float dodgeChance;
 
@@ -56,25 +52,30 @@ public class Player : Entity
     public GameObject sword;
     public GameObject reticle;
     public GameManager gm;
+    public GameObject bone;
+    public AudioSource particleSound;
+    public AudioSource waveSound;
+    public AudioSource tunnelSound;
+    public AudioSource entangleSound;
+    public AudioSource alignmentSound;
+    public AudioSource superPositionSound;
+    public AudioSource dualitySound;
 
-    AudioSource hitSound;
-    AudioSource particleSound;
-    AudioSource waveSound;
-    AudioSource tunnelSound;
-    AudioSource entangleSound;
-    AudioSource alignmentSound;
-    AudioSource positionSound;
-    
-    
+
     // Start is called before the first frame update
     new void Start()
     {
-        base.Start();
+        canJump = true;
+        lastJump = false;
+        canAttack = true;
+        lastAttack = false;
+        myRig = this.GetComponent<Rigidbody>();
+        myAnim = this.GetComponentInChildren<Animator>();
         playerHeight = 4.75f;
         speed = 10.0f;
         hp = 20.0f;
         maxHp = 20;
-        jumpSpeed = new Vector3(0, 20, 0);
+        jumpSpeed = new Vector3(0, 10, 0);
         decoherence = 0;
         maxDecoherence = 6;
         decoherenceGain = 1;
@@ -97,9 +98,6 @@ public class Player : Entity
         attackcd = .5f;
         dcd = 8;
         spinAmount = 1;
-        doubleJump = false;
-        doubleJumps = 0;
-        canDoubleJump = 0;
         qeCost = 3;
         dodgeChance = 0;
         iframes = .67f;
@@ -113,19 +111,18 @@ public class Player : Entity
     // Update is called once per frame
     new void Update()
     {
-        
+        base.Update();
         myRig.velocity =  new Vector3(look.forward.x,0, look.forward.z).normalized * speed * lastDirection.y + new Vector3(0, myRig.velocity.y, 0);
         myRig.velocity += new Vector3(look.right.x, 0, look.right.z).normalized * speed * lastDirection.x;
 
-            if (lastDirection != Vector2.zero)
-            {
-                //myAnim.SetInteger("Action", 3);
-            }
+
             if (lastJump && canJump)
             {
-                myRig.velocity += new Vector3(jumpSpeed.x, jumpSpeed.y, 0);
-                lastJump = false;
+            myAnim.SetInteger("Anim", 2);
+            lastJump = false;
                 canJump = false;
+                StartCoroutine(Jump());
+                
             }
             else if (!canJump && myRig.velocity.y <= 0)
             {
@@ -136,15 +133,17 @@ public class Player : Entity
                     foreach (RaycastHit ready in checks)
                     {
                         if (ready.distance < .5f && (ready.collider.gameObject.CompareTag("World")))
+                        {
+                            
                             canJump = true;
-                    if (doubleJump == true)
-                        canDoubleJump = doubleJumps;
+                        }
+
                     }
                 }
 
             }
-        
 
+        
             Physics.Raycast(cam.transform.position + cam.transform.forward * .5f,cam.transform.forward, out RaycastHit check);
 
             if (check.distance <= qeRange && check.collider)
@@ -165,28 +164,33 @@ public class Player : Entity
                 StartCoroutine(Attack());
             
             }
-            
 
+        bone.transform.localRotation.eulerAngles.Set(look.transform.rotation.eulerAngles.x+ transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, look.transform.rotation.eulerAngles.z+ transform.rotation.eulerAngles.z);
 
 
     }
+    IEnumerator Jump()
+    {
+        
+        yield return new WaitForSecondsRealtime(.667f);
 
+        myRig.velocity += new Vector3(jumpSpeed.x, jumpSpeed.y, 0);
+    }
     public void onMove(InputAction.CallbackContext ev)
     {
         if (ev.started)
         {
-            //myAnim.SetInteger("Action", 3);
+            myAnim.SetInteger("Anim", 3);
         }
 
         if (ev.performed)
             {
                 lastDirection = ev.ReadValue<Vector2>();
-                //myAnim.SetInteger("Action", 3);
             }
         if (ev.canceled)
         {
             lastDirection = Vector2.zero;
-            //myAnim.SetInteger("Action", 0);
+
         }
     }
     public void Look(InputAction.CallbackContext ev)
@@ -211,23 +215,31 @@ public class Player : Entity
     }
     IEnumerator Attack()
     {
+        
         canAttack = false;
 
         yield return new WaitForSecondsRealtime(.25f);
+        
         if (isDuality == false)
         {
+            myAnim.SetInteger("Anim", 4);
             GameObject tmp = GameObject.Instantiate(electron, staff.transform.position, cam.transform.rotation, null);
             tmp.transform.LookAt(this.cam.position + cam.transform.forward * electronRange);
             canAttack = false;
+            particleSound.Play();
 
         }
         else if (isDuality == true)
         {
+            myAnim.SetInteger("Anim", 4);
             GameObject tmp = GameObject.Instantiate(wave, sword.transform.position, Quaternion.Euler(new Vector3(90, 0, 0)), null);
             canAttack = false;
+            waveSound.Play();
+           
 
         }
         yield return new WaitForSecondsRealtime(attackcd);
+        
         canAttack = true;
     }
     public void Pause()
@@ -262,23 +274,17 @@ public class Player : Entity
     {
         if(ev.started && canTunnel && decoherence >= 1)
         {
-            Physics.Raycast(this.transform.position + new Vector3(0, playerHeight, 0), look.transform.forward, out RaycastHit tunnelCheck, qtRange);
-            if (lastDirection != Vector2.zero && tunnelCheck.collider)
+            Physics.Raycast(this.transform.position + new Vector3(0, playerHeight, 0) + look.transform.forward, look.transform.forward, out RaycastHit tunnelCheck, qtRange);
+            if (tunnelCheck.collider)
             {
+                tunnelSound.Play();
                 canTunnel = false;
                 decoherence -= 1;
                 this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * tunnelCheck.distance * lastDirection.y;
                 this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * tunnelCheck.distance * lastDirection.x;
                 StartCoroutine(QTCD());
             }
-            else if (lastDirection != Vector2.zero)
-            {
-                canTunnel = false;
-                decoherence -= 1;
-                this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * qtRange * lastDirection.y;
-                this.transform.position += new Vector3(look.transform.forward.x, 0, look.transform.forward.z) * qtRange * lastDirection.x;
-                StartCoroutine(QTCD());
-            }
+            
         }   
     }
     IEnumerator QTCD()
@@ -292,6 +298,7 @@ public class Player : Entity
     {
         if (ev.started && canSuper && decoherence >= 2)
         {
+            superPositionSound.Play();
             decoherence -= 2;
             canSuper = false;
             if (canJump)
@@ -341,6 +348,7 @@ public class Player : Entity
     {
         if (ev.started && canAlignment && decoherence >= 3)
         {
+            alignmentSound.Play();
             decoherence -= 3;
             isAlignment = true;
             canAlignment = false;
@@ -359,6 +367,7 @@ public class Player : Entity
     {
         if (ev.started && canEntangle && decoherence >= qeCost)
         {
+            entangleSound.Play();
             decoherence -= 3;
             canEntangle = false;
             Physics.Raycast(cam.transform.position + cam.transform.forward, cam.transform.forward, out RaycastHit check);
@@ -386,6 +395,7 @@ public class Player : Entity
     {
         if (ev.started && canDuality)
         {
+            dualitySound.Play();
             canDuality = false;
             if (isDuality == true)
                 isDuality = false;
@@ -404,10 +414,10 @@ public class Player : Entity
     public void Jump(InputAction.CallbackContext ev)
     {
        
-        if (ev.started && canDoubleJump > 0)
+        if (ev.started)
         {
+            
             lastJump = true;
-            canDoubleJump--;
         }
     }
     IEnumerator Invincibility()
@@ -427,12 +437,15 @@ public class Player : Entity
             {
                 if (other.gameObject.CompareTag("Enemy"))
                 {
+                    hitSound.Play();
                     hp--;
                     isInvincible = true;
                     StartCoroutine(Invincibility());
                 }
                 if (other.gameObject.CompareTag("Eyebeam"))
                 {
+                    hitSound.Play();
+
                     if (decoherence > 0)
                         decoherence--;
                     hp--;
@@ -441,6 +454,8 @@ public class Player : Entity
                 }
                 else if (other.gameObject.CompareTag("Poison"))
                 {
+                    hitSound.Play();
+
                     hp--;
                     isInvincible = true;
                     StartCoroutine(Invincibility());

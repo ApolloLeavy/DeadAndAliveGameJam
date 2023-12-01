@@ -4,8 +4,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
+
     public int currentLevel = 0;
     public GameObject pauseMenu;
     public GameObject startMenu;
@@ -21,6 +23,8 @@ public class GameManager : MonoBehaviour
     public GameObject superPositioncd;
     public GameObject alignmentcd;
     public GameObject entanglecd;
+    public GameObject eventSystem;
+
     public float dualityCD;
     public float tunnelCD;
     public float superPositionCD;
@@ -42,6 +46,8 @@ public class GameManager : MonoBehaviour
         reticle = GameObject.Find("Reticle");
         reticle.SetActive(false);
         HUD = GameObject.Find("HUD");
+        eventSystem = GameObject.Find("EventSystem");
+
         HUD.SetActive(false);
 
 
@@ -54,6 +60,8 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(canvas);
         DontDestroyOnLoad(player);
         DontDestroyOnLoad(look);
+        DontDestroyOnLoad(eventSystem);
+
         StartCoroutine(Cooldowns());
     }
     public void StartGame()
@@ -72,16 +80,19 @@ public class GameManager : MonoBehaviour
     {
         
     }
-    
+    public void NextLevel()
+    {
+        //SceneManager.UnloadSceneAsync(sceneName: "Level" + (currentLevel));
+        currentLevel++;
+        SceneManager.LoadScene(currentLevel);
+        
+    }
     public void Quit()
     {
         Application.Quit();
     }
     
-    public void loadLevel(int level)
-    {
 
-    }
     public IEnumerator Cooldowns()
     {
         healthAmount.GetComponent<Text>().text = player.GetComponent<Player>().hp.ToString();

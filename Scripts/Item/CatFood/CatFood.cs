@@ -6,6 +6,14 @@ public class CatFood : Item
 {
     public new void pickup()
     {
-        player.hp++;
+        player.GetComponent<Player>().hp++;
+    }
+    public new void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider && collision.collider.CompareTag("Player"))
+        {
+            this.pickup();
+            Destroy(this.gameObject);
+        }
     }
 }

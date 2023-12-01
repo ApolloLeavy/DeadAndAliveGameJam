@@ -17,15 +17,16 @@ public class Entity : MonoBehaviour
     public Vector2 lastDirection;
     public Rigidbody myRig;
     public Animator myAnim;
+    public AudioSource hitSound;
+    public AudioSource dieSound;
+    public AudioSource attackSound;
+
 
     // Start is called before the first frame update
     public void Start()
     {
-        //speed
-        //hp
         canJump = true;
         lastJump = false;
-        //jumpSpeed
         canAttack = true;
         lastAttack = false;
         myRig = this.GetComponent<Rigidbody>();
@@ -37,10 +38,16 @@ public class Entity : MonoBehaviour
     {
         if (lastDirection != Vector2.zero)
         {
-            //myAnim.SetInteger("Action", 3);
+            myAnim.SetInteger("Anim", 3);
+
+        }
+        if (lastDirection == Vector2.zero)
+        {
+            myAnim.SetInteger("Anim", 0);
+
         }
         
-        
+
     }
 
 }

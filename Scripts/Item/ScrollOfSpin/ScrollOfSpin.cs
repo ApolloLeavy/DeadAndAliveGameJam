@@ -6,6 +6,14 @@ public class ScrollOfSpin : Item
 {
     public new void pickup()
     {
-        player.spinAmount += 1;
+        player.GetComponent<Player>().spinAmount += 1;
+    }
+    public new void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider && collision.collider.CompareTag("Player"))
+        {
+            this.pickup();
+            Destroy(this.gameObject);
+        }
     }
 }

@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    public Player player;
+    public GameObject player;
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.Find("Player").GetComponent<Player>();
+        player = GameObject.Find("Player");
     }
 
     // Update is called once per fram
@@ -18,9 +18,9 @@ public class Item : MonoBehaviour
     }
     public void OnCollisionEnter(Collision collision)
     {
-        if(collision.collider && collision.collider.CompareTag("Player"))
+        if (collision.collider && collision.collider.CompareTag("Player"))
         {
-            pickup();
+            this.pickup();
             Destroy(this.gameObject);
         }
     }

@@ -7,9 +7,17 @@ public class CrownOfWebs : Item
     public new void pickup()
     {
         
-        player.qecd *= .666f;
-        if (player.qeCost > 0)
-            player.qeCost--;
+        player.GetComponent<Player>().qecd *= .666f;
+        if (player.GetComponent<Player>().qeCost > 0)
+            player.GetComponent<Player>().qeCost--;
         
+    }
+    public new void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider && collision.collider.CompareTag("Player"))
+        {
+            this.pickup();
+            Destroy(this.gameObject);
+        }
     }
 }

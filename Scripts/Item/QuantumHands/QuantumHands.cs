@@ -6,6 +6,15 @@ public class QuantumHands : Item
 {
     public new void pickup()
     {
-        player.dcd = 0;
+        player.GetComponent<Player>().dcd = 0;
     }
+    public new void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider && collision.collider.CompareTag("Player"))
+        {
+            this.pickup();
+            Destroy(this.gameObject);
+        }
+    }
+
 }

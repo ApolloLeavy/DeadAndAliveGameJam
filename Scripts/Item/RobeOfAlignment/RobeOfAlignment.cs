@@ -6,6 +6,14 @@ public class RobeOfAlignment : Item
 {
     public new void pickup()
     {
-        player.dodgeChance+=10;
+        player.GetComponent<Player>().dodgeChance+=10;
+    }
+    public new void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider && collision.collider.CompareTag("Player"))
+        {
+            this.pickup();
+            Destroy(this.gameObject);
+        }
     }
 }

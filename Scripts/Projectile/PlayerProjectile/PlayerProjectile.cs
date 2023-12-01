@@ -20,7 +20,12 @@ public class PlayerProjectile : Projectile
     {
 
         if (other.GetComponent<Enemy>() && other.GetComponent<Enemy>().hp <= 0)
+        {
+            other.gameObject.GetComponent<Enemy>().dieSound.Play();
+            other.gameObject.GetComponent<Enemy>().myAnim.SetInteger("Anim", 1);
             Destroy(other.gameObject);
+
+        }
         base.OnTriggerEnter(other);
     }
 }
