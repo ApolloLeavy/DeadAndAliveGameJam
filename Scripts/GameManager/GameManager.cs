@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour
         //SceneManager.UnloadSceneAsync(sceneName: "Level" + (currentLevel));
         currentLevel++;
         SceneManager.LoadScene(currentLevel);
+        player.transform.position = new Vector3(0, 0, 0);
         
     }
     public void Quit()
