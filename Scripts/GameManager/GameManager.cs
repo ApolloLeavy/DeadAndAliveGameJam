@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(player);
         DontDestroyOnLoad(look);
         DontDestroyOnLoad(eventSystem);
+        DontDestroyOnLoad(this.gameObject);
 
         StartCoroutine(Cooldowns());
     }
@@ -109,6 +110,10 @@ public class GameManager : MonoBehaviour
     public void Lose()
     {
         gameOver.SetActive(true);
+        HUD.SetActive(false);
+        pauseMenu.SetActive(false);
+        reticle.SetActive(false);
+
         Time.timeScale = 0;
         return;
     }

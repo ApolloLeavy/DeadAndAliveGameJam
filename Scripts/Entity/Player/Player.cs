@@ -269,6 +269,8 @@ public class Player : Entity
         {
             gm.pauseMenu.SetActive(true);
             gm.HUD.SetActive(false);
+            gm.reticle.SetActive(false);
+
 
             Time.timeScale = 0;
         }
@@ -277,9 +279,11 @@ public class Player : Entity
             gm.pauseMenu.SetActive(false);
             Time.timeScale = 1;
             gm.HUD.SetActive(true);
+            gm.reticle.SetActive(true);
+
 
         }
-        
+
     }
     
     IEnumerator Decoherence()
