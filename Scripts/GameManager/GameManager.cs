@@ -98,6 +98,7 @@ public class GameManager : MonoBehaviour
         if (currentLevel == 3)
         {
             gameWin.SetActive(true);
+            Time.timeScale = 0;
             
         }
         else
