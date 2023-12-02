@@ -20,6 +20,5 @@ public class Portal : MonoBehaviour
     {
         if(collision.collider.CompareTag("Player"))
             gm.GetComponent<GameManager>().NextLevel();
-        Destroy(this.gameObject);
     }
 }
