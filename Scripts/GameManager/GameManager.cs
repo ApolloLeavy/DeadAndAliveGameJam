@@ -94,12 +94,10 @@ public class GameManager : MonoBehaviour
     }
     public void NextLevel()
     {
-        //SceneManager.UnloadSceneAsync(sceneName: "Level" + (currentLevel));
         currentLevel++;
         if (currentLevel == 3)
         {
             gameWin.SetActive(true);
-            Time.timeScale = 0;
             
         }
         else
