@@ -112,13 +112,14 @@ public class Enemy : Entity
     }
     public void getEntangled()
     {
-        isEntangled = true;
+        
         RaycastHit[] checks = Physics.SphereCastAll(this.transform.position, entangleBounce, this.transform.forward);
         
             foreach (RaycastHit check in checks)
             {
                 if (check.collider.gameObject.CompareTag("Enemy") && !check.collider.gameObject.GetComponent<Enemy>().isEntangled)
                 {
+                    isEntangled = true;
                     tangled = check.collider.gameObject;
                     check.collider.gameObject.GetComponent<Enemy>().isEntangled = true;
                     check.collider.gameObject.GetComponent<Enemy>().tangled = this.gameObject;
@@ -147,7 +148,6 @@ public class Enemy : Entity
         if(other.gameObject.tag == "Electron")
         {
             myAnim.SetInteger("Anim", 0);
-            hitSound.Play();   
             spin += other.GetComponent<Electron>().player.GetComponent<Player>().spinAmount;
             hp -= 1;
             if (tangled)
@@ -155,7 +155,6 @@ public class Enemy : Entity
         }
         if (other.gameObject.tag == "Wave" || other.gameObject.tag == "The Wave")
         {
-            hitSound.Play();
             myAnim.SetInteger("Anim", 0);
 
             hp -= (1 + spin);

@@ -465,7 +465,7 @@ public class Player : Entity
             {
                 if (other.gameObject.CompareTag("Enemy"))
                 {
-                    hitSound.Play();
+  
                     hp--;
                     isInvincible = true;
                     StartCoroutine(Invincibility());
@@ -478,7 +478,6 @@ public class Player : Entity
                 }
                 if (other.gameObject.CompareTag("Eyebeam"))
                 {
-                    hitSound.Play();
 
                     if (decoherence > 0)
                         decoherence--;
@@ -492,7 +491,6 @@ public class Player : Entity
                 }
                 else if (other.gameObject.CompareTag("Poison"))
                 {
-                    hitSound.Play();
 
                     hp--;
                     isInvincible = true;
@@ -513,4 +511,5 @@ public class Player : Entity
         gm.Lose();
         Time.timeScale = 0;
     }
+
 }

@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     public GameObject alignmentcd;
     public GameObject entanglecd;
     public GameObject eventSystem;
-
+    [SerializeField] Slider volume;
     public float dualityCD;
     public float tunnelCD;
     public float superPositionCD;
@@ -87,6 +87,10 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+    public void Volume()
+    {
+        AudioListener.volume = volume.value;
     }
     public void NextLevel()
     {

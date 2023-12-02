@@ -17,7 +17,6 @@ public class Entity : MonoBehaviour
     public Vector2 lastDirection;
     public Rigidbody myRig;
     public Animator myAnim;
-    public AudioSource hitSound;
     public AudioSource dieSound;
     public AudioSource attackSound;
 
